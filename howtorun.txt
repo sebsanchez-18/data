@@ -1,2 +1,3 @@
 pip install requests pandas
+cd ~/data/web-scraper 
 python download_streetview.py
