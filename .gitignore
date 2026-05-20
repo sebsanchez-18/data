@@ -1,4 +1,5 @@
 .venv/
+.api/
 **/api_key.txt
 images/
 images_metadata/
