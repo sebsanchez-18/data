@@ -9,7 +9,7 @@ stops = stops.head(10)
 
 print(f"Running on {len(stops)} stops")
 
-with open("api_key.txt", "r") as f:
+with open(".api/api_key.txt", "r") as f:
     api_key = f.read().strip()
 
 os.makedirs("images_metadata", exist_ok=True)
