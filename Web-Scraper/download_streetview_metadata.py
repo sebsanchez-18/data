@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 
 stops = pd.read_csv("Altered 2026 GoDurham Bus Stop List.csv")
-stops = stops.head(10)
+
 
 print(f"Running on {len(stops)} stops")
 
