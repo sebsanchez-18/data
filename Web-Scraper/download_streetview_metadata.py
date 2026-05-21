@@ -8,7 +8,7 @@ stops = pd.read_csv("Altered 2026 GoDurham Bus Stop List.csv")
 
 stops = stops.sort_values("Stop Code")
 
-stops = stops.head(10)
+stops = stops.head(20)
 
 
 print(f"Running on {len(stops)} stops")
