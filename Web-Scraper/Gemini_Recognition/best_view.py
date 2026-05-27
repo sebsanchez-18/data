@@ -23,14 +23,27 @@ OUTPUT_CSV = Path("bus_stop_results.csv")
 MODEL = "gemini-3.5-flash"
 
 # If using Google Cloud / Vertex / Agent Platform:
+def load_api_key(path: str = "gemini_key.txt") -> str:
+    key_path = Path(path)
+
+    if not key_path.exists():
+        raise FileNotFoundError(
+            f"Could not find {path}. Make sure gemini_key.txt is in the same folder as this script."
+        )
+
+    api_key = key_path.read_text(encoding="utf-8").strip()
+
+    if not api_key:
+        raise ValueError(f"{path} is empty.")
+
+    return api_key
+
+
 client = genai.Client(
-    enterprise=True,
-    project=os.environ["GOOGLE_CLOUD_PROJECT"],
-    location="global",
+    api_key=load_api_key("gemini_key.txt")
 )
 
-# If instead using a Gemini API key, comment out the client above and use:
-# client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+
 
 
 FINAL_IMAGES_DIR.mkdir(exist_ok=True)
