@@ -65,16 +65,19 @@ def parse_stop_id_and_view(path: Path):
 
     stop_id = match.group(1)
 
-    if "left" in filename:
-        view = "left"
-    elif "center" in filename or "centre" in filename:
-        view = "center"
-    elif "right" in filename:
-        view = "right"
-    else:
+    # Detect view only from the actual view tag before "_heading"
+    view_match = re.search(r"_(left|center|centre|right)_heading", filename)
+
+    if not view_match:
         raise ValueError(
-            f"Could not determine view left/center/right from filename: {path.name}"
+            f"Could not determine view from filename: {path.name}. "
+            "Expected pattern like '_left_heading', '_center_heading', or '_right_heading'."
         )
+
+    view = view_match.group(1)
+
+    if view == "centre":
+        view = "center"
 
     return stop_id, view
 
