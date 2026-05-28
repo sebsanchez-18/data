@@ -38,11 +38,10 @@ def load_api_key(path: str) -> str:
 
     return api_key
 
-
 client = genai.Client(
-    api_key=load_api_key(
-        "/Users/sebastiansanchez121/data/Web-Scraper/Gemini_Recognition/key_gemini.txt"
-    )
+    vertexai=True,
+    project="dataplus-godurham",
+    location="global",
 )
 
 
