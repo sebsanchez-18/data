@@ -1,1 +1,80 @@
-[]
+[
+  {
+    "stop_id": "1072",
+    "best_view": "center",
+    "selected_image_filename": "1072_Old_Chapel_Hill_Rd_at_Garrett_Rd_EB_2025-01_center_heading-102.jpg",
+    "stop_surface": "Grass",
+    "landing_type": "Unpaved_Grass_Strip_And_Sidewalk",
+    "sidewalk_connection": "No",
+    "landing_pad": "NA",
+    "shelter_number": 0,
+    "bench_number": 0,
+    "trash_can_number": 0,
+    "street_lighting": "No",
+    "confidence": {
+      "best_view": 0.9,
+      "stop_surface": 0.95,
+      "landing_type": 0.95,
+      "sidewalk_connection": 0.95,
+      "landing_pad": 0.95,
+      "shelter_number": 0.99,
+      "bench_number": 0.99,
+      "trash_can_number": 0.99,
+      "street_lighting": 0.9
+    },
+    "notes": "The bus stop is located on a grass strip between the road curb and a concrete sidewalk. There is no paved connection from the sidewalk to the curb. No amenities such as shelters, benches, trash cans, or streetlights are visible.",
+    "final_image_path": "final_images/1072_Old_Chapel_Hill_Rd_at_Garrett_Rd_EB_2025-01_center_heading-102.jpg"
+  },
+  {
+    "stop_id": "1074",
+    "best_view": "left",
+    "selected_image_filename": "1074_University_Dr_at_American_Red_Cross_2025-01_left_heading-109.jpg",
+    "stop_surface": "Grass",
+    "landing_type": "Unpaved_Grass_Strip_And_Sidewalk",
+    "sidewalk_connection": "No",
+    "landing_pad": "NA",
+    "shelter_number": 0,
+    "bench_number": 0,
+    "trash_can_number": 0,
+    "street_lighting": "No",
+    "confidence": {
+      "best_view": 0.9,
+      "stop_surface": 0.95,
+      "landing_type": 0.95,
+      "sidewalk_connection": 0.95,
+      "landing_pad": 1.0,
+      "shelter_number": 1.0,
+      "bench_number": 1.0,
+      "trash_can_number": 1.0,
+      "street_lighting": 0.9
+    },
+    "notes": "The bus stop has a sidewalk separated from the curb by a grass strip, with no paved connection between them.",
+    "final_image_path": "final_images/1074_University_Dr_at_American_Red_Cross_2025-01_left_heading-109.jpg"
+  },
+  {
+    "stop_id": "1075",
+    "best_view": "center",
+    "selected_image_filename": "1075_University_Dr_at_Ivy_Creek_Blvd_2025-01_center_heading-161.jpg",
+    "stop_surface": "Concrete",
+    "landing_type": "Paved",
+    "sidewalk_connection": "Yes",
+    "landing_pad": "One_door",
+    "shelter_number": 0,
+    "bench_number": 1,
+    "trash_can_number": 0,
+    "street_lighting": "Yes",
+    "confidence": {
+      "best_view": 0.95,
+      "stop_surface": 1.0,
+      "landing_type": 1.0,
+      "sidewalk_connection": 1.0,
+      "landing_pad": 0.9,
+      "shelter_number": 0.9,
+      "bench_number": 0.95,
+      "trash_can_number": 1.0,
+      "street_lighting": 1.0
+    },
+    "notes": "The bus stop features a concrete landing pad directly connected to the sidewalk. There is a bench with a large back panel (no roof, so counted as 0 shelters and 1 bench) and a street light pole immediately adjacent to the pad.",
+    "final_image_path": "final_images/1075_University_Dr_at_Ivy_Creek_Blvd_2025-01_center_heading-161.jpg"
+  }
+]

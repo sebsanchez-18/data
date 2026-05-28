@@ -15,7 +15,7 @@ from google.genai import types
 # CONFIG
 # ============================================================
 
-INPUT_DIR = Path("images")          # folder containing all left/center/right images
+INPUT_DIR = Path("images_metadata")          # folder containing all left/center/right images
 FINAL_IMAGES_DIR = Path("final_images")
 OUTPUT_JSON = Path("bus_stop_results.json")
 OUTPUT_CSV = Path("bus_stop_results.csv")
@@ -23,14 +23,27 @@ OUTPUT_CSV = Path("bus_stop_results.csv")
 MODEL = "gemini-3.5-flash"
 
 # If using Google Cloud / Vertex / Agent Platform:
+def load_api_key(path: str) -> str:
+    key_path = Path(path)
+
+    if not key_path.exists():
+        raise FileNotFoundError(
+            f"Could not find API key file: {key_path}"
+        )
+
+    api_key = key_path.read_text(encoding="utf-8").strip()
+
+    if not api_key:
+        raise ValueError(f"API key file is empty: {key_path}")
+
+    return api_key
+
 client = genai.Client(
-    enterprise=True,
-    project=os.environ["GOOGLE_CLOUD_PROJECT"],
+    vertexai=True,
+    project="dataplus-godurham",
     location="global",
 )
 
-# If instead using a Gemini API key, comment out the client above and use:
-# client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 
 FINAL_IMAGES_DIR.mkdir(exist_ok=True)
@@ -51,16 +64,19 @@ def parse_stop_id_and_view(path: Path):
 
     stop_id = match.group(1)
 
-    if "left" in filename:
-        view = "left"
-    elif "center" in filename or "centre" in filename:
-        view = "center"
-    elif "right" in filename:
-        view = "right"
-    else:
+    # Detect view only from the actual view tag before "_heading"
+    view_match = re.search(r"_(left|center|centre|right)_heading", filename)
+
+    if not view_match:
         raise ValueError(
-            f"Could not determine view left/center/right from filename: {path.name}"
+            f"Could not determine view from filename: {path.name}. "
+            "Expected pattern like '_left_heading', '_center_heading', or '_right_heading'."
         )
+
+    view = view_match.group(1)
+
+    if view == "centre":
+        view = "center"
 
     return stop_id, view
 

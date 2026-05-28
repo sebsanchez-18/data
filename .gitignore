@@ -8,3 +8,4 @@ __pycache__/
 **/roboflow_api.txt
 .DS_Store
 **/.DS_Store
+**/key_gemini.txt
