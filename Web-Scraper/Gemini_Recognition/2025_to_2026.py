@@ -9,6 +9,7 @@ from pathlib import Path
 
 SOURCE_DIR = Path("images_metadata")
 OUTPUT_DIR = Path("images_metadata_current_only")
+NO_TXT_OUTPUT_DIR = Path("images_metadata_current_only_no_txt")
 
 VALID_IMAGE_EXTENSIONS = {
     ".jpg",
@@ -24,15 +25,7 @@ REPLACEMENT_MESSAGE = "no current image detected\n"
 # HELPERS
 # ============================================================
 
-def extract_year_from_filename(path: Path) -> int | None:
-    """
-    Finds a 4-digit year in the filename.
-
-    Example:
-    1072_Old_Chapel_Hill_Rd_2025-01_center_heading-102.jpg -> 2025
-    1072_Old_Chapel_Hill_Rd_2024-09_center_heading-102.jpg -> 2024
-    """
-
+def extract_year_from_filename(path: Path):
     match = re.search(r"(19\d{2}|20\d{2})", path.name)
 
     if not match:
@@ -49,6 +42,23 @@ def output_path_for(source_path: Path) -> Path:
     relative_path = source_path.relative_to(SOURCE_DIR)
     return OUTPUT_DIR / relative_path
 
+def create_no_txt_folder():
+    """
+    Creates a second output folder that copies everything from OUTPUT_DIR
+    except .txt files.
+    """
+
+    if NO_TXT_OUTPUT_DIR.exists():
+        shutil.rmtree(NO_TXT_OUTPUT_DIR)
+
+    for path in OUTPUT_DIR.rglob("*"):
+        if path.is_file() and path.suffix.lower() != ".txt":
+            relative_path = path.relative_to(OUTPUT_DIR)
+            destination_path = NO_TXT_OUTPUT_DIR / relative_path
+            destination_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, destination_path)
+
+    print(f"No-txt folder created: {NO_TXT_OUTPUT_DIR.resolve()}")
 
 # ============================================================
 # MAIN
@@ -94,6 +104,8 @@ def main():
             copied_current += 1
             print(f"Copied current image: {source_path.name}")
 
+    create_no_txt_folder()
+    
     print("\nFinished.")
     print(f"Images checked: {checked}")
     print(f"Current images copied: {copied_current}")
