@@ -7,3 +7,4 @@ __pycache__/
 **/vision_api.txt
 **/roboflow_api.txt
 **/key_gemini.txt
+**/.venv310
