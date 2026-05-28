@@ -128,7 +128,16 @@ Each bus stop has three image views:
 - center
 - right
 
-First, choose which image gives the best overall view of the bus stop.
+First, determine whether the image trio appears to show a bus stop or bus stop area.
+
+Set bus_stop_visible:
+- "Yes" if at least one of the three images clearly shows a bus stop sign, boarding/landing area, shelter, bench, route sign, bus stop pole, or obvious bus stop zone.
+- "No" if none of the three images appear to show a bus stop or relevant stop area.
+- "Unclear" if the scene may show the stop area but visual evidence is limited, blocked, blurry, too far away, or ambiguous.
+
+Set bus_stop_visibility_confidence from 0.0 to 1.0 based on how confident you are in the bus_stop_visible label.
+
+Then choose which image gives the best overall view of the bus stop.
 The best view should show the boarding/landing area, road edge or curb,
 sidewalk if present, and nearby amenities such as shelter, bench, trash can,
 and lighting.
@@ -139,6 +148,11 @@ Use only visible evidence. Do not guess hidden features.
 If a field is not applicable, use "NA".
 If uncertain, choose the most visually supported option and lower the confidence.
 Count only clearly visible objects at or immediately around the bus stop.
+
+If bus_stop_visible is "No" or "Unclear":
+- still choose the best available view
+- still classify visible attributes as best as possible
+- explain the concern in notes
 
 Definitions:
 
@@ -194,16 +208,20 @@ Choose "NA" if there is no usable paved landing area, sidewalk_connection is
 
 5. shelter_number
 Integer count.
+
 0 means no visible shelter.
 Count the number of bus shelters visible at or immediately around the stop.
+A bench with a back panel but no roof should be counted as a bench, not a shelter.
 
 6. bench_number
 Integer count.
+
 0 means no visible bench.
 Count the number of benches visible at or immediately around the stop.
 
 7. trash_can_number
 Integer count.
+
 0 means no visible trash can.
 Count the number of trash cans visible at or immediately around the stop.
 
@@ -219,6 +237,8 @@ Allowed values: "left", "center", "right"
 Choose the image that gives the clearest and most complete view of the bus stop
 and boarding area. Do not choose based only on image sharpness. Choose based on
 usefulness for classification.
+
+Return only JSON matching the schema.
 """
 
 
@@ -229,12 +249,26 @@ usefulness for classification.
 response_schema = {
     "type": "object",
     "properties": {
-        "stop_id": {"type": "string"},
+        "stop_id": {
+            "type": "string"
+        },
         "best_view": {
             "type": "string",
             "enum": ["left", "center", "right"],
         },
-        "selected_image_filename": {"type": "string"},
+        "selected_image_filename": {
+            "type": "string"
+        },
+
+        # New bus stop visibility check
+        "bus_stop_visible": {
+            "type": "string",
+            "enum": ["Yes", "No", "Unclear"],
+        },
+        "bus_stop_visibility_confidence": {
+            "type": "number",
+        },
+
         "stop_surface": {
             "type": "string",
             "enum": ["Grass", "Concrete"],
@@ -274,18 +308,40 @@ response_schema = {
         "confidence": {
             "type": "object",
             "properties": {
-                "best_view": {"type": "number"},
-                "stop_surface": {"type": "number"},
-                "landing_type": {"type": "number"},
-                "sidewalk_connection": {"type": "number"},
-                "landing_pad": {"type": "number"},
-                "shelter_number": {"type": "number"},
-                "bench_number": {"type": "number"},
-                "trash_can_number": {"type": "number"},
-                "street_lighting": {"type": "number"},
+                "best_view": {
+                    "type": "number"
+                },
+                "bus_stop_visible": {
+                    "type": "number"
+                },
+                "stop_surface": {
+                    "type": "number"
+                },
+                "landing_type": {
+                    "type": "number"
+                },
+                "sidewalk_connection": {
+                    "type": "number"
+                },
+                "landing_pad": {
+                    "type": "number"
+                },
+                "shelter_number": {
+                    "type": "number"
+                },
+                "bench_number": {
+                    "type": "number"
+                },
+                "trash_can_number": {
+                    "type": "number"
+                },
+                "street_lighting": {
+                    "type": "number"
+                },
             },
             "required": [
                 "best_view",
+                "bus_stop_visible",
                 "stop_surface",
                 "landing_type",
                 "sidewalk_connection",
@@ -296,12 +352,16 @@ response_schema = {
                 "street_lighting",
             ],
         },
-        "notes": {"type": "string"},
+        "notes": {
+            "type": "string"
+        },
     },
     "required": [
         "stop_id",
         "best_view",
         "selected_image_filename",
+        "bus_stop_visible",
+        "bus_stop_visibility_confidence",
         "stop_surface",
         "landing_type",
         "sidewalk_connection",
@@ -427,6 +487,8 @@ def write_csv(results):
         "best_view",
         "selected_image_filename",
         "final_image_path",
+        "bus_stop_visible",
+        "bus_stop_visibility_confidence",
         "stop_surface",
         "landing_type",
         "sidewalk_connection",
@@ -445,7 +507,6 @@ def write_csv(results):
         for r in results:
             row = {field: r.get(field, "") for field in fields}
             writer.writerow(row)
-
 
 def save_json(results):
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
