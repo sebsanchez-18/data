@@ -21,7 +21,20 @@ def load_api_key(path: str) -> str:
 
 # Initialize the Gemini Client for your enterprise project
 try:
-    # 1. Point the client to Vertex AI without passing an API key string
+    # Check if running on Streamlit Cloud and inject credentials if present
+    if "GOOGLE_APPLICATION_CREDENTIALS_JSON" in st.secrets:
+        import tempfile
+        
+        # 1. Create a persistent temporary file that doesn't instantly close
+        # Streamlit needs this file path to remain valid while the client is active
+        tfile = tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w")
+        tfile.write(st.secrets["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
+        tfile.close() # Close it so the system flushes the data to disk
+        
+        # 2. Tell the environment where to look
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tfile.name
+            
+    # 3. Now the client will strictly use your service account file instead of searching the metadata server!
     client = genai.Client(
         vertexai=True,
         project=GEMINI_PROJECT,
